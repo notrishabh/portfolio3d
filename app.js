@@ -7,6 +7,8 @@ var arroww;
 var namer;
 var imagePlane;
 var subnamer;
+let cloudParticles = [], flash;
+
 
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
@@ -182,6 +184,7 @@ function start(){
     
     setupPhysicsWorld();
     setupGraphics();
+    backG();
     // createPlane();
     createBall();
     // createBox(boxFunc.box1);
@@ -236,10 +239,10 @@ function setupGraphics(){
     clock = new THREE.Clock();
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x404040);
+    // scene.background = new THREE.Color(0x404040);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.2,5000);
-    // camera.position.set(0,30,50);
+    camera.position.set(0,30,50);
     // camera.lookAt(new THREE.Vector3(0,10,0));
 
     // let hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.5);
@@ -269,6 +272,14 @@ function setupGraphics(){
 
     // dirLight.shadow.camera.far = 13500;
 
+    ambient = new THREE.AmbientLight(0x555555);
+    scene.add(ambient);
+    
+
+    flash = new THREE.PointLight(0x062d89, 30, 500 ,1.7);
+    flash.position.set(50,100,-600);
+    scene.add(flash);
+
     let hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.8);
     hemiLight.color.setHSL(0.6, 0.6, 0.6);
     hemiLight.groundColor.setHSL(0.1, 1, 0.4);
@@ -297,6 +308,8 @@ function setupGraphics(){
     dirLight.shadow.camera.far = 15000;
 
     renderer = new THREE.WebGLRenderer({antialias: true});
+    scene.fog = new THREE.FogExp2(0x11111f, 0.002);
+    renderer.setClearColor(scene.fog.color);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -323,6 +336,21 @@ function renderFrame(){
     }
     camera.lookAt(ballObject.position);
 
+    cloudParticles.forEach(p => {
+        p.rotation.z -=0.002;
+      });
+    if(Math.random() > 0.93 || flash.power > 100) {
+    if(flash.power < 100) 
+        flash.position.set(
+        Math.random()*1000,
+        300 + Math.random() *200,
+        // 200,
+        -400
+        // 100
+        );
+    flash.power = 50 + Math.random() * 500;
+    }
+
 
 
     updatePhysics(deltaTime);
@@ -331,6 +359,7 @@ function renderFrame(){
     requestAnimationFrame(renderFrame);
 
     // setTimeout(function() {arroww.rotation.y += 0.01;},1000)
+    
 
 
 
@@ -340,6 +369,7 @@ function setupEventHandlers() {
     window.addEventListener('keydown', handleKeyDown, false);
     window.addEventListener('keyup', handleKeyUp, false);
     window.addEventListener('click', onMouseDown, false );
+    window.addEventListener("resize", onWindowResize);
 }
 
 function handleKeyDown(event) {
@@ -422,6 +452,41 @@ function onMouseDown(event) {
             intersects[0].object.callback();
         }
     }
+}
+
+function backG() {
+    let loader = new THREE.TextureLoader();
+        loader.load("textures/smoke.png", function(texture){
+        cloudGeo = new THREE.PlaneBufferGeometry(500,500);
+        cloudMaterial = new THREE.MeshLambertMaterial({
+            map: texture,
+            transparent: true
+        });
+        // let cloud = new THREE.Mesh(cloudGeo,cloudMaterial);
+        // scene.add(cloud);
+        for(let p=0; p<25; p++) {
+            let cloud = new THREE.Mesh(cloudGeo,cloudMaterial);
+            // cloud.position.set(
+            // Math.random()*800 -400,
+            // 500,
+            // Math.random()*500 - 450
+            // );
+            cloud.position.set(
+            Math.random()*1000 - 500,
+            // Math.random()*1000 - 450,
+            100,
+            // -500
+            Math.random()*-800 - 400
+            );
+            
+            // cloud.rotation.x = 1.16;
+            // cloud.rotation.y = -0.12;
+            cloud.rotation.z = Math.random()*360;
+            cloud.material.opacity = 0.6;
+            cloudParticles.push(cloud);
+            scene.add(cloud);
+        }
+    });
 }
 
 
@@ -834,4 +899,11 @@ function updatePhysics( deltaTime ){
         }
     }
 
+}
+
+function onWindowResize(){
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
 }
