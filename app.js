@@ -66,49 +66,49 @@ var modelsFunc = {
         mesh : {},
         mtl: "models/codedocs.mtl",
         obj: "models/codedocs.obj",
-        pos : {x:-51, y:7, z:-55},
-        scale : {x:4, y:4, z:4},
-        rotation : {x:0, y:5, z:0},
-        quat : {x:0, y:0, z:0, w:1},
+        pos : {x:-60, y:10, z:-55},
+        scale : {x:6, y:6, z:6},
+        rotation : {x:0, y:5.6, z:0},
+        quat : {x:0, y:2, z:0, w:1},
         mass : 0,
-        phyScale : {x:1.5, y:7, z:1.5},
+        phyScale : {x:1, y:7, z:3.5},
         callback : codedocsHandler
     },
     ccn: {
         mesh : {},
         mtl: "models/ccn.mtl",
         obj: "models/ccn.obj",
-        pos : {x:20, y:7, z:-55},
-        scale : {x:4, y:4, z:4},
-        rotation : {x:0, y:4.8, z:0},
-        quat : {x:0, y:0, z:0, w:1},
+        pos : {x:0, y:10, z:-55},
+        scale : {x:6, y:6, z:6},
+        rotation : {x:0, y:5.3, z:0},
+        quat : {x:0, y:2, z:0, w:1},
         mass : 0,
-        phyScale : {x:1.5, y:7, z:1.5},
+        phyScale : {x:1, y:7, z:3.5},
         callback : ccnHandler
 
     },
     propkar: {
         mesh : {},
-        mtl: "models/propkar.mtl",
-        obj: "models/propkar.obj",
-        pos : {x:0, y:12, z:-55},
-        scale : {x:7, y:7, z:7},
-        rotation : {x:0, y:4.8, z:0},
+        mtl: "models/newpc.mtl",
+        obj: "models/newpc.obj",
+        pos : {x:-15, y:12, z:-55},
+        scale : {x:16, y:16, z:16},
+        rotation : {x:0, y:5.3, z:0},
         quat : {x:0, y:0, z:0, w:1},
         mass : 0,
-        phyScale : {x:1.5, y:7, z:1.5},
+        phyScale : {x:1, y:10, z:1},
         callback : propkarHandler
     },
     stb: {
         mesh : {},
-        mtl: "models/stb.mtl",
-        obj: "models/stb.obj",
-        pos : {x:-30, y:12, z:-55},
-        scale : {x:7, y:7, z:7},
-        rotation : {x:0, y:4.8, z:0},
+        mtl: "models/newpc.mtl",
+        obj: "models/newpc.obj",
+        pos : {x:-40, y:12, z:-55},
+        scale : {x:16, y:16, z:16},
+        rotation : {x:0, y:5.3, z:0},
         quat : {x:0, y:0, z:0, w:1},
         mass : 0,
-        phyScale : {x:1.5, y:7, z:1.5},
+        phyScale : {x:1, y:10, z:1},
         callback : stbHandler
 
     },
@@ -170,6 +170,18 @@ var imageFunc = {
         scale: {x:5, y:5, z:5},
         rotation: {x:-1.5708, y:0, z:0}
     },
+    stb : {
+        img: "models/images/stb2.png",
+        pos: {x:-40, y:14, z:-54.5},
+        scale: {x:21, y:13, z:15},
+        rotation: {x:0, y:-5.7, z:0}
+    },
+    propkar : {
+        img: "models/images/propkar.png",
+        pos: {x:-15, y:14, z:-54.5},
+        scale: {x:21, y:13, z:15},
+        rotation: {x:0, y:-5.7, z:0}
+    },
 };
 
 const STATE = {DISABLE_DEACTIVATION : 4};
@@ -203,7 +215,7 @@ function start(){
     subNamePlate();
     // projects();
     // arrow();
-    models(modelsFunc.greenBottle);
+    // models(modelsFunc.greenBottle);
     image(imageFunc.js);
     image(imageFunc.flutter);
     image(imageFunc.c);
@@ -213,6 +225,8 @@ function start(){
     image(imageFunc.boot);
     image(imageFunc.html);
     image(imageFunc.blender);
+    image(imageFunc.stb);
+    image(imageFunc.propkar);
     // models(modelsFunc.dice);
     setupEventHandlers();
 
@@ -445,10 +459,16 @@ function onMouseDown(event) {
 
     for ( var i=0; i<intersects.length; i++) {
         // intersects[0].object.callback();
-        if(intersects[i].object.name.includes("Material")){
-            // console.log("xd");
-        }else{
+        if(intersects[i].object.name.includes("Material.002")){
+            // console.log("material02");
+            // console.log(intersects[i]);
+            intersects[0].object.callback();
+
+        }else if(intersects[i].object.name.includes("Material")) {
+            console.log("nice");
             console.log(intersects[i]);
+        }else{
+            // console.log(intersects[i]);
             intersects[0].object.callback();
         }
     }
@@ -673,12 +693,12 @@ function models(modelsFunc) {
 
 
 function namePlate() {
-    let pos = {x:-15, y:1.2, z:0};
+    let pos = {x:-10, y:1.2, z:0};
     let scale = {x:5, y:5, z:5};
     let rotation = {x:0, y:-1.57, z:0};
     let quat = {x:0, y:0, z:0, w:1};
     let mass = 0;
-    let phyScale = {x:10, y:2, z:0};
+    let phyScale = {x:11, y:2, z:0};
 
     var mtlLoader = new THREE.MTLLoader();
     mtlLoader.load("models/plane/name.mtl", function(materials) {
@@ -702,7 +722,7 @@ function namePlate() {
 
     let transform = new Ammo.btTransform();
     transform.setIdentity();
-    transform.setOrigin( new Ammo.btVector3( pos.x + 10, pos.y, pos.z ) );
+    transform.setOrigin( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
     transform.setRotation( new Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
     let motionState = new Ammo.btDefaultMotionState( transform );
 
@@ -723,18 +743,18 @@ function namePlate() {
 
 
 function subNamePlate() {
-    let pos = {x:12.5, y:2, z:0};
+    let pos = {x:9, y:1.5, z:0};
     let scale = {x:5, y:5, z:8};
     let rotation = {x:0, y:-1.57, z:0};
     let quat = {x:0, y:0, z:0, w:1};
     let mass = 0;
-    let phyScale = {x:7, y:2, z:0};
+    let phyScale = {x:10, y:2, z:0};
 
     var mtlLoader = new THREE.MTLLoader();
-    mtlLoader.load("models/plane/subName.mtl", function(materials) {
+    mtlLoader.load("models/plane/subName2.mtl", function(materials) {
         var objLoader = new THREE.OBJLoader();
         objLoader.setMaterials(materials);
-        objLoader.load("models/plane/subName.obj", function(mesh) {
+        objLoader.load("models/plane/subName2.obj", function(mesh) {
             mesh.traverse(function(node) {
                 if(node instanceof THREE.Mesh){
                     node.castShadow=true;

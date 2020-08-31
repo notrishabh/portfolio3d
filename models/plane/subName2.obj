@@ -1,6 +1,6 @@
 # Blender v2.83.5 OBJ File: 'name.blend'
 # www.blender.org
-mtllib subName.mtl
+mtllib subName2.mtl
 o name.001_Text.001
 v 0.060000 0.241075 -1.121131
 v 0.060000 0.241075 -1.143529
