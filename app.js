@@ -53,8 +53,8 @@ var modelsFunc = {
         phyScale : {x:1.5, y:7, z:1.5}
     },
     plane: {
-        mtl: "models/plane/plane15.mtl",
-        obj: "models/plane/plane15.obj",
+        mtl: "models/plane/plane.mtl",
+        obj: "models/plane/plane.obj",
         pos : {x:0, y:1, z:0},
         scale : {x:1, y:1, z:1},
         rotation : {x:0, y:0, z:0},
@@ -111,6 +111,42 @@ var modelsFunc = {
         phyScale : {x:1, y:10, z:1},
         callback : stbHandler
 
+    },
+    github: {
+        mesh : {},
+        mtl: "models/github.mtl",
+        obj: "models/github.obj",
+        pos : {x:45, y:3, z:10},
+        scale : {x:5, y:5, z:5},
+        rotation : {x:0, y:-2, z:0},
+        quat : {x:0, y:0, z:0, w:1},
+        mass : 0,
+        phyScale : {x:1, y:10, z:1},
+        callback : githubHandler
+    },
+    linkedin: {
+        mesh : {},
+        mtl: "models/linkedin.mtl",
+        obj: "models/linkedin.obj",
+        pos : {x:45, y:3, z:20},
+        scale : {x:5, y:5, z:5},
+        rotation : {x:0, y:-2, z:0},
+        quat : {x:0, y:0, z:0, w:1},
+        mass : 0,
+        phyScale : {x:1, y:10, z:1},
+        callback : linkedinHandler
+    },
+    gmail: {
+        mesh : {},
+        mtl: "models/gmail.mtl",
+        obj: "models/gmail.obj",
+        pos : {x:45, y:3, z:30},
+        scale : {x:5, y:5, z:5},
+        rotation : {x:0, y:-2, z:0},
+        quat : {x:0, y:0, z:0, w:1},
+        mass : 0,
+        phyScale : {x:1, y:10, z:1},
+        callback : gmailHandler
     },
 
 };
@@ -211,6 +247,9 @@ function start(){
     models(modelsFunc.ccn);
     models(modelsFunc.propkar);
     models(modelsFunc.stb);
+    models(modelsFunc.github);
+    models(modelsFunc.linkedin);
+    models(modelsFunc.gmail);
     namePlate();
     subNamePlate();
     // projects();
@@ -340,7 +379,7 @@ function renderFrame(){
 
     moveBall();
 
-    if(ballObject.position.x > -60 && ballObject.position.x < 42 && ballObject.position.z > -55 && ballObject.position.z < -25){
+    if(ballObject.position.x > -65 && ballObject.position.x < 13 && ballObject.position.z > -55 && ballObject.position.z < -15){
         camera.position.set(ballObject.position.x,40,ballObject.position.z +20);
     }else if(ballObject.position.x > -58 && ballObject.position.x < -29 && ballObject.position.z > 21 && ballObject.position.z < 54) {
         camera.position.set(ballObject.position.x,40,ballObject.position.z +10);
@@ -443,6 +482,15 @@ function propkarHandler(){
 function stbHandler(){
     window.open('https://github.com/notrishabh/ccn','_blank');
 }
+function githubHandler(){
+    window.open('https://github.com/notrishabh/','_blank');
+}
+function linkedinHandler(){
+    window.open('https://www.linkedin.com/in/rishabh-chauhan-5528b11b4/','_blank');
+}
+function gmailHandler(){
+    window.open('mailto:rishabh107107@gmail.com','_blank');
+}
 
 function onMouseDown(event) {
     event.preventDefault();
@@ -453,7 +501,7 @@ function onMouseDown(event) {
 
     raycaster.setFromCamera(mouse, camera);
 
-    meshObjects = [modelsFunc.codedocs.mesh, modelsFunc.ccn.mesh, modelsFunc.propkar.mesh, modelsFunc.stb.mesh, namer, subnamer];
+    meshObjects = [modelsFunc.codedocs.mesh, modelsFunc.ccn.mesh, modelsFunc.propkar.mesh, modelsFunc.stb.mesh, modelsFunc.github.mesh, modelsFunc.linkedin.mesh, modelsFunc.gmail.mesh ];
 
     var intersects = raycaster.intersectObjects(meshObjects, true);
 
@@ -465,8 +513,11 @@ function onMouseDown(event) {
             intersects[0].object.callback();
 
         }else if(intersects[i].object.name.includes("Material")) {
-            console.log("nice");
-            console.log(intersects[i]);
+            // console.log("nice");
+            // console.log(intersects[i]);
+        }else if(intersects[i].object.name.includes("None")) {
+            // console.log("none");
+            // console.log(intersects[i]);
         }else{
             // console.log(intersects[i]);
             intersects[0].object.callback();
@@ -562,11 +613,23 @@ function createBall(){
     let mass = 1;
 
     let textureLoader = new THREE.TextureLoader();
-    ballTexture = textureLoader.load("textures/balldimpled.png");
+    ballTexture = textureLoader.load("textures/rock0_color.jpg");
+    normalTexture = textureLoader.load("textures/rock0_normal.jpg");
+    displacementTexture= textureLoader.load("textures/Rock0_Displacement.jpg");
+    roughnessTexture= textureLoader.load("textures/Rock0_Roughness.jpg");
+    aoTexture= textureLoader.load("textures/Rock0_AmbientOcclusion.jpg");
+
 
     let ball = ballObject = new THREE.Mesh(
         new THREE.SphereGeometry(radius, 32, 32),
-        new THREE.MeshPhongMaterial({map: ballTexture}),
+        new THREE.MeshStandardMaterial({
+            map: ballTexture,
+            normalMap : normalTexture,
+            // displacementMap : displacementTexture,
+            roughnessMap: roughnessTexture,
+            aoMap : aoTexture
+
+        }),
     );
     ball.position.set(pos.x, pos.y, pos.z);
     
