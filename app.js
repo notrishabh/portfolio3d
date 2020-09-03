@@ -117,11 +117,11 @@ var modelsFunc = {
         mtl: "models/github.mtl",
         obj: "models/github.obj",
         pos : {x:45, y:3, z:10},
-        scale : {x:5, y:5, z:5},
+        scale : {x:6, y:6, z:6},
         rotation : {x:0, y:-2, z:0},
         quat : {x:0, y:0, z:0, w:1},
         mass : 0,
-        phyScale : {x:1, y:10, z:1},
+        phyScale : {x:1, y:2, z:1},
         callback : githubHandler
     },
     linkedin: {
@@ -129,11 +129,11 @@ var modelsFunc = {
         mtl: "models/linkedin.mtl",
         obj: "models/linkedin.obj",
         pos : {x:45, y:3, z:20},
-        scale : {x:5, y:5, z:5},
+        scale : {x:6, y:6, z:6},
         rotation : {x:0, y:-2, z:0},
         quat : {x:0, y:0, z:0, w:1},
         mass : 0,
-        phyScale : {x:1, y:10, z:1},
+        phyScale : {x:1, y:2, z:1},
         callback : linkedinHandler
     },
     gmail: {
@@ -141,13 +141,14 @@ var modelsFunc = {
         mtl: "models/gmail.mtl",
         obj: "models/gmail.obj",
         pos : {x:45, y:3, z:30},
-        scale : {x:5, y:5, z:5},
+        scale : {x:6, y:6, z:6},
         rotation : {x:0, y:-2, z:0},
         quat : {x:0, y:0, z:0, w:1},
         mass : 0,
-        phyScale : {x:1, y:10, z:1},
+        phyScale : {x:1, y:2, z:1},
         callback : gmailHandler
     },
+    
 
 };
 
@@ -220,6 +221,39 @@ var imageFunc = {
     },
 };
 
+var wallFunc = {
+    left : {
+        pos : {x:-67, y:3, z:0},
+        scale : {x:0.1, y:4, z:134},
+        rotation : {x:0, y:0, z:0},
+        quat : {x:0, y:0, z:0, w:1},
+
+
+    },
+    right : {
+        pos : {x:67, y:3, z:0},
+        scale : {x:0.1, y:4, z:134},
+        rotation : {x:0, y:0, z:0},
+        quat : {x:0, y:0, z:0, w:1},
+
+
+    },
+    up : {
+        pos : {x:0, y:3, z:-67},
+        scale : {x:0.1, y:4, z:134},
+        rotation : {x:0, y:1.57, z:0},
+        quat : {x:0, y:1, z:0, w:1},
+
+    },
+    down : {
+        pos : {x:0, y:3, z:67},
+        scale : {x:0.1, y:4, z:134},
+        rotation : {x:0, y:1.57, z:0},
+        quat : {x:0, y:1, z:0, w:1},
+
+    }
+};
+
 const STATE = {DISABLE_DEACTIVATION : 4};
 
 //Ammojs Initialization
@@ -235,6 +269,10 @@ function start(){
     backG();
     // createPlane();
     createBall();
+    createWall(wallFunc.left);
+    createWall(wallFunc.right);
+    createWall(wallFunc.up);
+    createWall(wallFunc.down);
     // createBox(boxFunc.box1);
     // createBox(boxFunc.box2);
     // createBox(boxFunc.box3);
@@ -274,6 +312,7 @@ function start(){
 
 
 }
+
 
 function setupPhysicsWorld(){
 
@@ -592,6 +631,48 @@ function createPlane(){
     let motionState = new Ammo.btDefaultMotionState( transform );
 
     let colShape = new Ammo.btBoxShape( new Ammo.btVector3( scale.x * 0.5, scale.y * 0.5, scale.z * 0.5 ) );
+    colShape.setMargin( 0.05 );
+
+    let localInertia = new Ammo.btVector3( 0, 0, 0 );
+    colShape.calculateLocalInertia( mass, localInertia );
+
+    let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, colShape, localInertia );
+    let body = new Ammo.btRigidBody( rbInfo );
+
+    body.setFriction(4);
+    body.setRollingFriction(10);
+
+    physicsWorld.addRigidBody(body);
+}
+
+function createWall(wallFunc){
+    let quat = {x:0, y:0, z:0, w:1};
+    let mass = 0;
+
+    let plane = new THREE.Mesh(
+        new THREE.BoxBufferGeometry(),
+        new THREE.MeshPhongMaterial({
+            color: 0x85A9C1,
+            opacity: 0.2,
+            transparent: true
+        })
+    );
+
+    plane.position.set(wallFunc.pos.x, wallFunc.pos.y, wallFunc.pos.z);
+    plane.scale.set(wallFunc.scale.x, wallFunc.scale.y, wallFunc.scale.z);
+    plane.rotation.set(wallFunc.rotation.x, wallFunc.rotation.y, wallFunc.rotation.z) 
+    plane.castShadow = true;
+    plane.receiveShadow = true;
+
+    scene.add(plane);
+
+    let transform = new Ammo.btTransform();
+    transform.setIdentity();
+    transform.setOrigin( new Ammo.btVector3( wallFunc.pos.x, wallFunc.pos.y, wallFunc.pos.z ) );
+    transform.setRotation( new Ammo.btQuaternion( wallFunc.quat.x, wallFunc.quat.y, wallFunc.quat.z, wallFunc.quat.w ) );
+    let motionState = new Ammo.btDefaultMotionState( transform );
+
+    let colShape = new Ammo.btBoxShape( new Ammo.btVector3( wallFunc.scale.x * 0.5, wallFunc.scale.y * 0.5, wallFunc.scale.z * 0.5 ) );
     colShape.setMargin( 0.05 );
 
     let localInertia = new Ammo.btVector3( 0, 0, 0 );
