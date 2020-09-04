@@ -8,17 +8,6 @@
             margin: 0; 
             overflow: hidden;
             }
-        #info{
-            position: absolute;
-            color: beige;
-            opacity: 0;
-        }
-        #btn{
-            position: absolute;
-            top : 100px;
-            cursor: auto;
-            opacity: 0;
-        }
 
         @keyframes ldio-a015a9to0j-1 {
         0% { transform: rotate(0deg) }
@@ -36,7 +25,7 @@
     .ldio-a015a9to0j > div:nth-child(2) div {
       position: absolute;
       top: 43%;
-      left: 50%;
+      left: 43%;
       width: 120px;
       height: 60px;
       border-radius: 120px 120px 0 0;
@@ -61,7 +50,7 @@
     .ldio-a015a9to0j > div:nth-child(1) div {
       position: absolute;
       top: 50%;
-      left: 50%;
+      left: 43%;
       width: 16px;
       height: 16px;
       border-radius: 50%;
@@ -78,6 +67,7 @@
       display: inline-block;
       overflow: hidden;
       /* background: #ffffff; */
+
     }
     .ldio-a015a9to0j {
       width: 100%;
@@ -93,25 +83,77 @@
     #loadingText{
         position: absolute;
         top: 20%;
-        left: 50%;
+        left: 43%;
         color: beige;
         font-size: 48px;
     }
+
+    #info{
+          position: absolute;
+          height: 100%;
+          width: 100%;
+          color: white;
+          opacity: 0;
+          font-weight: normal;
+          font-size: 54px;
+          text-align: center;
+          background-color: #20222c;
+        }
+    #firsttext{
+      margin-top: 10%;
+    }
+    #btn{
+        position: absolute;
+        /* top: 50%;
+        left: 50%; */
+        background-color: #20222c;
+        color: white;
+        border: 2px solid #fbff38;
+        padding: 10px 40px;
+        cursor: auto;
+        opacity: 0;
+        margin: 5% 0 0 -5%;
+        font-size: large;
+    }
+    #btn:hover{
+      background-color: rgba(128, 128, 128, 0.219);
+      transform : scale(1.1,1.1);
+    }
+
+    #name{
+      color: #fbff38;
+      font-weight: bold;
+    }
+    #secondtext{
+      font-size: 34px;
+      margin-top: 50px;
+    }
+    #thirdtext{
+      font-size: 20px;
+      margin-top: -10px;
+
+    }
+        
 
 
     </style>
 </head>
 <body>
 
-    <div id = "info">wooow</div>
-    
     
     <div id="loadingText">Loading</div>
     <div class="loadingio-spinner-bean-eater-qcbt2x0zis" id="loader"><div class="ldio-a015a9to0j">
         <div><div></div><div></div><div></div></div><div><div></div><div></div><div></div></div>
         </div></div>
 
-        <button id="btn" disabled onclick="htmlButton()">START</button>
+    <div id = "info">
+      <p id="firsttext">Hi, I’m <span id= "name">Rishabh Chauhan</span></p>
+      <p id="secondtext">This is an interactive 3D portfolio</p>
+      <p id = "thirdtext">Move the ball with the arrow keys on the keyboard</p>
+      <button id="btn" disabled onclick="htmlButton()">START</button>
+    </div>
+    
+
 
     <script src="js/three.min.js"></script>
     <script src="js/MTLLoader.js"></script>

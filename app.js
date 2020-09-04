@@ -66,11 +66,11 @@ var LOADING_MANAGER = null;
 
 
 function htmlButton(){
-    console.log("xddd");
     BUTTON_PRESSED = true;
     document.getElementById("info").style.opacity = 0;
     document.getElementById("btn").style.opacity = 0;
     document.getElementById("btn").disabled = true;
+    document.getElementById("info").style.cursor = "default";
     document.getElementById("btn").style.cursor = "auto";
 
 }
@@ -209,6 +209,26 @@ var modelsFunc = {
         phyScale : {x:1, y:2, z:1},
         callback : gmailHandler
     },
+    chess: {
+        mtl: "models/chess.mtl",
+        obj: "models/chess.obj",
+        pos : {x:-5, y:1, z:45},
+        scale : {x:4, y:4, z:4},
+        rotation : {x:0, y:0, z:0},
+        quat : {x:0, y:0, z:0, w:1},
+        mass : 0,
+        phyScale : {x:1.5, y:7, z:1.5}
+    },
+    guitar: {
+        mtl: "models/2.mtl",
+        obj: "models/2.obj",
+        pos : {x:0.5, y:1, z:45},
+        scale : {x:0.01, y:0.01, z:0.01},
+        rotation : {x:-1.57, y:-0.5, z:-2.34},
+        quat : {x:0, y:0, z:0, w:1},
+        mass : 0,
+        phyScale : {x:1.5, y:7, z:1.5}
+    },
     
 
 };
@@ -342,6 +362,9 @@ function start(){
     models(modelsFunc.github);
     models(modelsFunc.linkedin);
     models(modelsFunc.gmail);
+    models(modelsFunc.chess);
+    models(modelsFunc.guitar);
+
     namePlate();
     subNamePlate();
     // projects();
@@ -418,14 +441,12 @@ function setupGraphics(){
             document.getElementById("btn").style.cursor = "pointer";
 
 
-        }, 2000)
+        }, 1000)
         
     }
 
     // menuScreen.button.position.set(0,0,5);
     // menuScreen.camera.lookAt(menuScreen.button.position);
-    // menuScreen.scene.add(menuScreen.button);
-    
 
 
 
@@ -501,7 +522,6 @@ function renderFrame(){
         renderer.render(menuScreen.scene, menuScreen.camera);
         return;
     }
-
 
     moveBall();
 
