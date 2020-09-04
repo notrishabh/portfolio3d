@@ -12,7 +12,68 @@ let cloudParticles = [], flash;
 
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
+var loader = new THREE.FontLoader();
 
+var loadingScreen = {
+    scene : new THREE.Scene(),
+    camera : new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.2,5000),
+    box : new THREE.Mesh(
+        new THREE.BoxGeometry(0.5,0.5,0.5),
+        new THREE.MeshStandardMaterial({color : 0xffffff})
+    ),
+    sphere1 : new THREE.Mesh(
+        new THREE.SphereGeometry(0.1,32,32),
+        new THREE.MeshStandardMaterial({
+            color: 0xff3333,
+            opacity: 1,
+            transparent: true
+        })
+    ),
+    sphere2 : new THREE.Mesh(
+        new THREE.SphereGeometry(0.1,32,32),
+        new THREE.MeshStandardMaterial({
+            color: 0xff3333,
+            opacity: 1,
+            transparent: true
+        })
+    ),
+    sphere3 : new THREE.Mesh(
+        new THREE.SphereGeometry(0.1,32,32),
+        new THREE.MeshStandardMaterial({
+            color: 0xff3333,
+            opacity: 1,
+            transparent: true
+        })
+    ),
+    
+};
+
+var menuScreen = {
+    scene : new THREE.Scene(),
+    camera : new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.2,5000),
+
+    button : new THREE.Mesh(
+        new THREE.BoxGeometry(0.5,0.5,0.5),
+        new THREE.MeshBasicMaterial({color: 0xff3333}),
+    ),
+
+};
+
+
+var BUTTON_PRESSED = false;
+var RESOURCES_LOADED = false;
+var LOADING_MANAGER = null;
+
+
+function htmlButton(){
+    console.log("xddd");
+    BUTTON_PRESSED = true;
+    document.getElementById("info").style.opacity = 0;
+    document.getElementById("btn").style.opacity = 0;
+    document.getElementById("btn").disabled = true;
+    document.getElementById("btn").style.cursor = "auto";
+
+}
 
 var boxFunc = {
     box1 : {
@@ -273,13 +334,6 @@ function start(){
     createWall(wallFunc.right);
     createWall(wallFunc.up);
     createWall(wallFunc.down);
-    // createBox(boxFunc.box1);
-    // createBox(boxFunc.box2);
-    // createBox(boxFunc.box3);
-    // createBox(boxFunc.box4);
-    // models(modelsFunc.police);
-    // models(modelsFunc.tree);
-    // models(modelsFunc.race);
     models(modelsFunc.plane);
     models(modelsFunc.codedocs);
     models(modelsFunc.ccn);
@@ -304,7 +358,6 @@ function start(){
     image(imageFunc.blender);
     image(imageFunc.stb);
     image(imageFunc.propkar);
-    // models(modelsFunc.dice);
     setupEventHandlers();
 
     renderFrame();
@@ -337,32 +390,44 @@ function setupGraphics(){
     camera.position.set(0,30,50);
     // camera.lookAt(new THREE.Vector3(0,10,0));
 
-    // let hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.5);
-    // hemiLight.color.setHSL( 0.6, 0.6, 0.6 );
-    // hemiLight.groundColor.setHSL( 0.1, 1, 0.4 );
-    // hemiLight.position.set( 0, 50, 0 );
-    // scene.add( hemiLight );
+
+    // ambient = new THREE.AmbientLight(0xffffff);
+    // loadingScreen.scene.add(ambient);
+    // loadingScreen.box.position.set(0,0,5);
+    // loadingScreen.sphere1.position.set(1,0,5);
+    // loadingScreen.sphere2.position.set(0,0,5);
+    // loadingScreen.sphere3.position.set(-1,0,5);
+    // loadingScreen.camera.lookAt(new THREE.Vector3(0,0,5));
+    // loadingScreen.scene.add(loadingScreen.box);
+    // loadingScreen.scene.add(loadingScreen.sphere1, loadingScreen.sphere2, loadingScreen.sphere3);
 
 
-    // let dirLight = new THREE.DirectionalLight(0xffffff, 1);
-    // dirLight.color.setHSL( 0.1, 1, 0.95 );
-    // dirLight.position.set( 50, 200, 150 );
-    // scene.add(dirLight);
+    loadingManager = new THREE.LoadingManager();
+    // loadingManager.onProgress = function(item, loaded, total){
+    //     console.log(item,loaded,total);
+    // };
+    loadingManager.onLoad = function(){
+        console.log("loaded all resources");
+        setTimeout(function(){
+            RESOURCES_LOADED = true;
+            document.getElementById("loader").style.opacity = 0;
+            document.getElementById("loadingText").style.opacity = 0;
+            document.getElementById("btn").disabled = false;
+            document.getElementById("btn").style.opacity = 1;
+            document.getElementById("info").style.opacity = 1;
+            document.getElementById("btn").style.cursor = "pointer";
 
 
-    // dirLight.castShadow = true;
+        }, 2000)
+        
+    }
 
-    // dirLight.shadow.mapSize.width = 2048;
-    // dirLight.shadow.mapSize.height = 2048;
+    // menuScreen.button.position.set(0,0,5);
+    // menuScreen.camera.lookAt(menuScreen.button.position);
+    // menuScreen.scene.add(menuScreen.button);
+    
 
-    // let d = 50;
 
-    // dirLight.shadow.camera.left = -d;
-    // dirLight.shadow.camera.right = d;
-    // dirLight.shadow.camera.top = d;
-    // dirLight.shadow.camera.bottom = -d;
-
-    // dirLight.shadow.camera.far = 13500;
 
     ambient = new THREE.AmbientLight(0x555555);
     scene.add(ambient);
@@ -416,6 +481,28 @@ function setupGraphics(){
 function renderFrame(){
     let deltaTime = clock.getDelta();
 
+    if(RESOURCES_LOADED == false){
+        requestAnimationFrame(renderFrame);
+        loadingScreen.box.rotation.x += 0.1;
+        loadingScreen.sphere1.material.opacity -= 0.02;
+        if(loadingScreen.sphere1.material.opacity < 0){
+            loadingScreen.sphere2.material.opacity -= 0.02;
+        }
+        if(loadingScreen.sphere2.material.opacity < 0){
+            loadingScreen.sphere3.material.opacity -= 0.02;
+        }
+        renderer.render(loadingScreen.scene, loadingScreen.camera);
+        return;
+    }
+
+    if(BUTTON_PRESSED == false && RESOURCES_LOADED == true){
+        requestAnimationFrame(renderFrame);
+
+        renderer.render(menuScreen.scene, menuScreen.camera);
+        return;
+    }
+
+
     moveBall();
 
     if(ballObject.position.x > -65 && ballObject.position.x < 13 && ballObject.position.z > -55 && ballObject.position.z < -15){
@@ -461,6 +548,7 @@ function setupEventHandlers() {
     window.addEventListener('keydown', handleKeyDown, false);
     window.addEventListener('keyup', handleKeyUp, false);
     window.addEventListener('click', onMouseDown, false );
+    window.addEventListener('click', onButtonPressed, false );
     window.addEventListener("resize", onWindowResize);
 }
 
@@ -530,6 +618,23 @@ function linkedinHandler(){
 function gmailHandler(){
     window.open('mailto:rishabh107107@gmail.com','_blank');
 }
+function onButtonPressed(event){
+    event.preventDefault();
+
+     
+    mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+    mouse.y =  - (event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, menuScreen.camera);
+
+    var intersects = raycaster.intersectObjects([menuScreen.button]);
+    for(var i=0; i<intersects.length; i++){
+        // console.log(intersects[i]);
+        BUTTON_PRESSED = true;
+        document.getElementById("info").style.opacity = 0;
+    }
+
+}
 
 function onMouseDown(event) {
     event.preventDefault();
@@ -540,7 +645,16 @@ function onMouseDown(event) {
 
     raycaster.setFromCamera(mouse, camera);
 
-    meshObjects = [modelsFunc.codedocs.mesh, modelsFunc.ccn.mesh, modelsFunc.propkar.mesh, modelsFunc.stb.mesh, modelsFunc.github.mesh, modelsFunc.linkedin.mesh, modelsFunc.gmail.mesh ];
+
+    meshObjects = [
+        modelsFunc.codedocs.mesh,
+        modelsFunc.ccn.mesh, 
+        modelsFunc.propkar.mesh, 
+        modelsFunc.stb.mesh, 
+        modelsFunc.github.mesh, 
+        modelsFunc.linkedin.mesh, 
+        modelsFunc.gmail.mesh, 
+    ];
 
     var intersects = raycaster.intersectObjects(meshObjects, true);
 
@@ -693,7 +807,7 @@ function createBall(){
     let quat = {x:0, y:0, z:0, w:1};
     let mass = 1;
 
-    let textureLoader = new THREE.TextureLoader();
+    let textureLoader = new THREE.TextureLoader(loadingManager);
     ballTexture = textureLoader.load("textures/rock0_color.jpg");
     normalTexture = textureLoader.load("textures/rock0_normal.jpg");
     displacementTexture= textureLoader.load("textures/Rock0_Displacement.jpg");
@@ -793,9 +907,9 @@ function createBox(boxFunc) {
 
 function models(modelsFunc) {
 
-    var mtlLoader = new THREE.MTLLoader();
+    var mtlLoader = new THREE.MTLLoader(loadingManager);
     mtlLoader.load(modelsFunc.mtl, function(materials) {
-        var objLoader = new THREE.OBJLoader();
+        var objLoader = new THREE.OBJLoader(loadingManager);
         objLoader.setMaterials(materials);
         objLoader.load(modelsFunc.obj, function(mesh) {
             mesh.traverse(function(node) {
@@ -844,9 +958,9 @@ function namePlate() {
     let mass = 0;
     let phyScale = {x:11, y:2, z:0};
 
-    var mtlLoader = new THREE.MTLLoader();
+    var mtlLoader = new THREE.MTLLoader(loadingManager);
     mtlLoader.load("models/plane/name.mtl", function(materials) {
-        var objLoader = new THREE.OBJLoader();
+        var objLoader = new THREE.OBJLoader(loadingManager);
         objLoader.setMaterials(materials);
         objLoader.load("models/plane/name.obj", function(mesh) {
             mesh.traverse(function(node) {
@@ -894,9 +1008,9 @@ function subNamePlate() {
     let mass = 0;
     let phyScale = {x:10, y:2, z:0};
 
-    var mtlLoader = new THREE.MTLLoader();
+    var mtlLoader = new THREE.MTLLoader(loadingManager);
     mtlLoader.load("models/plane/subName2.mtl", function(materials) {
-        var objLoader = new THREE.OBJLoader();
+        var objLoader = new THREE.OBJLoader(loadingManager);
         objLoader.setMaterials(materials);
         objLoader.load("models/plane/subName2.obj", function(mesh) {
             mesh.traverse(function(node) {
@@ -1009,7 +1123,7 @@ function image(imageFunc){
     imagePlane = new THREE.Mesh(
         new THREE.PlaneGeometry(),
         new THREE.MeshBasicMaterial({
-            map:THREE.ImageUtils.loadTexture(imageFunc.img),
+            map:THREE.ImageUtils.loadTexture(imageFunc.img, loadingManager),
             transparent:true
         })
     );
