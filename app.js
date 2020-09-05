@@ -340,9 +340,9 @@ function setupGraphics(){
     camera.position.set(0,30,50);
 
     loadingManager = new THREE.LoadingManager();
-    loadingManager.onProgress = function(item, loaded, total){
-        console.log(item,loaded,total);
-    };
+    // loadingManager.onProgress = function(item, loaded, total){
+    //     console.log(item,loaded,total);
+    // };
     loadingManager.onLoad = function(){
         console.log("loaded all resources");
             RESOURCES_LOADED = true;
