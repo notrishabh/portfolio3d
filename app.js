@@ -327,6 +327,7 @@ function start(){
     createWall(wallFunc.right);
     createWall(wallFunc.up);
     createWall(wallFunc.down);
+    wallOfBricks();
     models(modelsFunc.plane);
     models(modelsFunc.codedocs);
     models(modelsFunc.ccn);
@@ -371,7 +372,7 @@ function setupPhysicsWorld(){
         solver = new Ammo.btSequentialImpulseConstraintSolver();
 
     physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-    physicsWorld.setGravity(new Ammo.btVector3(0,-25,0));
+    physicsWorld.setGravity(new Ammo.btVector3(0,-50,0));
 
 }
 
@@ -404,7 +405,6 @@ function setupGraphics(){
     // };
     loadingManager.onLoad = function(){
         console.log("loaded all resources");
-        setTimeout(function(){
             RESOURCES_LOADED = true;
             document.getElementById("loader").style.opacity = 0;
             document.getElementById("loadingText").style.opacity = 0;
@@ -412,9 +412,6 @@ function setupGraphics(){
             document.getElementById("btn").style.opacity = 1;
             document.getElementById("info").style.opacity = 1;
             document.getElementById("btn").style.cursor = "pointer";
-
-
-        }, 1000)
         
     }
 
@@ -474,6 +471,8 @@ function setupGraphics(){
 
 function renderFrame(){
     let deltaTime = clock.getDelta();
+    // let elapsedTime = clock.getElapsedTime();
+    // console.log(elapsedTime);
 
     if(RESOURCES_LOADED == false){
         requestAnimationFrame(renderFrame);
@@ -492,11 +491,11 @@ function renderFrame(){
     moveBall();
 
     if(ballObject.position.x > -65 && ballObject.position.x < 13 && ballObject.position.z > -55 && ballObject.position.z < -15){
-        camera.position.set(ballObject.position.x,40,ballObject.position.z +20);
+        camera.position.set(ballObject.position.x,ballObject.position.y + 40,ballObject.position.z +20);
     }else if(ballObject.position.x > -58 && ballObject.position.x < -29 && ballObject.position.z > 21 && ballObject.position.z < 54) {
-        camera.position.set(ballObject.position.x,40,ballObject.position.z +10);
+        camera.position.set(ballObject.position.x,ballObject.position.y + 40,ballObject.position.z +10);
     }else{
-        camera.position.set(ballObject.position.x,25,ballObject.position.z +35);
+        camera.position.set(ballObject.position.x,ballObject.position.y + 20,ballObject.position.z +35);
 
     }
     camera.lookAt(ballObject.position);
@@ -773,7 +772,7 @@ function createBall(){
     let pos = {x:0, y:20, z:8};
     let radius = 2;
     let quat = {x:0, y:0, z:0, w:1};
-    let mass = 1;
+    let mass = 3;
 
     let textureLoader = new THREE.TextureLoader(loadingManager);
     ballTexture = textureLoader.load("textures/rock0_color.jpg");
@@ -1059,6 +1058,115 @@ function image(imageFunc){
 
     scene.add(imagePlane);
 }
+
+function wallOfBricks() {
+    var pos = new THREE.Vector3();
+    var quat = new THREE.Quaternion();
+    var brickMass = 0.1;
+    var brickLength = 3;
+    var brickDepth = 3;
+    var brickHeight = 1.5;
+    var numberOfBricksAcross = 6;
+    var numberOfRowsHigh = 6;
+
+    pos.set(40, brickHeight * 0.5 + 1, -40);
+    quat.set(0, 0, 0, 1);
+
+    for (var j = 0; j < numberOfRowsHigh; j++) {
+      var oddRow = j % 2 == 1;
+
+      pos.x = 40;
+
+      if (oddRow) {
+        pos.x += 0.25 * brickLength;
+      }
+
+      var currentRow = oddRow ? numberOfBricksAcross + 1 : numberOfBricksAcross;
+      for (let i = 0; i < currentRow; i++) {
+        var brickLengthCurrent = brickLength;
+        var brickMassCurrent = brickMass;
+        if (oddRow && (i == 0 || i == currentRow - 1)) {
+          //first or last brick
+          brickLengthCurrent *= 0.5;
+          brickMassCurrent *= 0.5;
+        }
+        var brick = createBrick(
+          brickLengthCurrent,
+          brickHeight,
+          brickDepth,
+          brickMassCurrent,
+          pos,
+          quat,
+          new THREE.MeshLambertMaterial({
+            color: 0x4a2925,
+          })
+        );
+        brick.castShadow = true;
+        brick.receiveShadow = true;
+
+        if (oddRow && (i == 0 || i == currentRow - 2)) {
+          //first or last brick
+          pos.x += brickLength * 0.25;
+        } else {
+          pos.x += brickLength;
+        }
+        pos.z += 0.0001;
+      }
+      pos.y += brickHeight;
+    }
+  }
+
+  function createBrick(sx, sy, sz, mass, pos, quat, material) {
+    var threeObject = new THREE.Mesh(
+      new THREE.BoxBufferGeometry(sx, sy, sz, 1, 1, 1),
+      material
+    );
+    var shape = new Ammo.btBoxShape(
+      new Ammo.btVector3(sx * 0.5, sy * 0.5, sz * 0.5)
+    );
+    shape.setMargin(0.05);
+
+    createBrickBody(threeObject, shape, mass, pos, quat);
+
+    return threeObject;
+  }
+
+  function createBrickBody(threeObject, physicsShape, mass, pos, quat) {
+    threeObject.position.copy(pos);
+    threeObject.quaternion.copy(quat);
+
+    var transform = new Ammo.btTransform();
+    transform.setIdentity();
+    transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
+    transform.setRotation(
+      new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w)
+    );
+    var motionState = new Ammo.btDefaultMotionState(transform);
+
+    var localInertia = new Ammo.btVector3(0, 0, 0);
+    physicsShape.calculateLocalInertia(mass, localInertia);
+
+    var rbInfo = new Ammo.btRigidBodyConstructionInfo(
+      mass,
+      motionState,
+      physicsShape,
+      localInertia
+    );
+    var body = new Ammo.btRigidBody(rbInfo);
+
+    threeObject.userData.physicsBody = body;
+
+    scene.add(threeObject);
+
+    if (mass > 0) {
+      rigidBodies.push(threeObject);
+
+      // Disable deactivation
+      body.setActivationState(4);
+    }
+
+    physicsWorld.addRigidBody(body);
+  }
 
 
 function moveBall(){
