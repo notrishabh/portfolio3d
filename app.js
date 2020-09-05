@@ -17,34 +17,6 @@ var loader = new THREE.FontLoader();
 var loadingScreen = {
     scene : new THREE.Scene(),
     camera : new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.2,5000),
-    box : new THREE.Mesh(
-        new THREE.BoxGeometry(0.5,0.5,0.5),
-        new THREE.MeshStandardMaterial({color : 0xffffff})
-    ),
-    sphere1 : new THREE.Mesh(
-        new THREE.SphereGeometry(0.1,32,32),
-        new THREE.MeshStandardMaterial({
-            color: 0xff3333,
-            opacity: 1,
-            transparent: true
-        })
-    ),
-    sphere2 : new THREE.Mesh(
-        new THREE.SphereGeometry(0.1,32,32),
-        new THREE.MeshStandardMaterial({
-            color: 0xff3333,
-            opacity: 1,
-            transparent: true
-        })
-    ),
-    sphere3 : new THREE.Mesh(
-        new THREE.SphereGeometry(0.1,32,32),
-        new THREE.MeshStandardMaterial({
-            color: 0xff3333,
-            opacity: 1,
-            transparent: true
-        })
-    ),
     
 };
 
@@ -52,10 +24,6 @@ var menuScreen = {
     scene : new THREE.Scene(),
     camera : new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.2,5000),
 
-    // button : new THREE.Mesh(
-    //     new THREE.BoxGeometry(0.5,0.5,0.5),
-    //     new THREE.MeshBasicMaterial({color: 0xff3333}),
-    // ),
 
 };
 
@@ -76,16 +44,6 @@ function htmlButton(){
 }
 
 var modelsFunc = {
-    greenBottle: {
-        mtl: "models/greenBottle4.mtl",
-        obj: "models/greenBottle4.obj",
-        pos : {x:30, y:5, z:30},
-        scale : {x:50, y:50, z:50},
-        rotation : {x:0, y:0, z:0},
-        quat : {x:0, y:0, z:0, w:1},
-        mass : 0,
-        phyScale : {x:1.5, y:7, z:1.5}
-    },
     plane: {
         mtl: "models/plane/plane.mtl",
         obj: "models/plane/plane.obj",
@@ -321,7 +279,6 @@ function start(){
     setupPhysicsWorld();
     setupGraphics();
     backG();
-    // createPlane();
     createBall();
     createWall(wallFunc.left);
     createWall(wallFunc.right);
@@ -341,9 +298,6 @@ function start(){
 
     namePlate();
     subNamePlate();
-    // projects();
-    // arrow();
-    // models(modelsFunc.greenBottle);
     image(imageFunc.js);
     image(imageFunc.flutter);
     image(imageFunc.c);
@@ -381,28 +335,14 @@ function setupGraphics(){
     clock = new THREE.Clock();
 
     scene = new THREE.Scene();
-    // scene.background = new THREE.Color(0x404040);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.2,5000);
     camera.position.set(0,30,50);
-    // camera.lookAt(new THREE.Vector3(0,10,0));
-
-
-    // ambient = new THREE.AmbientLight(0xffffff);
-    // loadingScreen.scene.add(ambient);
-    // loadingScreen.box.position.set(0,0,5);
-    // loadingScreen.sphere1.position.set(1,0,5);
-    // loadingScreen.sphere2.position.set(0,0,5);
-    // loadingScreen.sphere3.position.set(-1,0,5);
-    // loadingScreen.camera.lookAt(new THREE.Vector3(0,0,5));
-    // loadingScreen.scene.add(loadingScreen.box);
-    // loadingScreen.scene.add(loadingScreen.sphere1, loadingScreen.sphere2, loadingScreen.sphere3);
-
 
     loadingManager = new THREE.LoadingManager();
-    // loadingManager.onProgress = function(item, loaded, total){
-    //     console.log(item,loaded,total);
-    // };
+    loadingManager.onProgress = function(item, loaded, total){
+        console.log(item,loaded,total);
+    };
     loadingManager.onLoad = function(){
         console.log("loaded all resources");
             RESOURCES_LOADED = true;
@@ -414,10 +354,6 @@ function setupGraphics(){
             document.getElementById("btn").style.cursor = "pointer";
         
     }
-
-    // menuScreen.button.position.set(0,0,5);
-    // menuScreen.camera.lookAt(menuScreen.button.position);
-
 
 
     ambient = new THREE.AmbientLight(0x555555);
@@ -522,9 +458,6 @@ function renderFrame(){
     renderer.render(scene,camera);
     requestAnimationFrame(renderFrame);
 
-    // setTimeout(function() {arroww.rotation.y += 0.01;},1000)
-    
-
 
 
 }
@@ -574,13 +507,7 @@ function handleKeyUp(event) {
     }
 }
 
-function objectClickHandler(){
-    window.open('http://www.google.com/','_blank');
-}
 
-function objectClickHandler2(){
-    window.open('http://www.youtube.com/','_blank');
-}
 function codedocsHandler(){
     window.open('https://github.com/notrishabh/CodeDocs','_blank');
 }
@@ -646,7 +573,7 @@ function onMouseDown(event) {
 }
 
 function backG() {
-    let loader = new THREE.TextureLoader();
+    let loader = new THREE.TextureLoader(loadingManager);
         loader.load("textures/smoke.png", function(texture){
         cloudGeo = new THREE.PlaneBufferGeometry(500,500);
         cloudMaterial = new THREE.MeshLambertMaterial({
@@ -681,50 +608,6 @@ function backG() {
 }
 
 
-// function createPlane(){
-
-//     let pos = {x:0, y:0, z:0};
-//     let scale = {x:100, y:2, z:100};
-//     let quat = {x:0, y:0, z:0, w:1};
-//     let mass = 0;
-
-//     let plane = new THREE.Mesh(
-//         new THREE.BoxBufferGeometry(),
-//         new THREE.MeshPhongMaterial({
-//             color: 0xa0afa4,
-//             opacity: 0.1,
-//             transparent: true
-//         })
-//     );
-
-//     plane.position.set(pos.x, pos.y, pos.z);
-//     plane.scale.set(scale.x, scale.y, scale.z);
-
-//     plane.castShadow = true;
-//     plane.receiveShadow = true;
-
-//     scene.add(plane);
-
-//     let transform = new Ammo.btTransform();
-//     transform.setIdentity();
-//     transform.setOrigin( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
-//     transform.setRotation( new Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
-//     let motionState = new Ammo.btDefaultMotionState( transform );
-
-//     let colShape = new Ammo.btBoxShape( new Ammo.btVector3( scale.x * 0.5, scale.y * 0.5, scale.z * 0.5 ) );
-//     colShape.setMargin( 0.05 );
-
-//     let localInertia = new Ammo.btVector3( 0, 0, 0 );
-//     colShape.calculateLocalInertia( mass, localInertia );
-
-//     let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, colShape, localInertia );
-//     let body = new Ammo.btRigidBody( rbInfo );
-
-//     body.setFriction(4);
-//     body.setRollingFriction(10);
-
-//     physicsWorld.addRigidBody(body);
-// }
 
 function createWall(wallFunc){
     let quat = {x:0, y:0, z:0, w:1};
@@ -777,9 +660,7 @@ function createBall(){
     let textureLoader = new THREE.TextureLoader(loadingManager);
     ballTexture = textureLoader.load("textures/rock0_color.jpg");
     normalTexture = textureLoader.load("textures/rock0_normal.jpg");
-    displacementTexture= textureLoader.load("textures/Rock0_Displacement.jpg");
     roughnessTexture= textureLoader.load("textures/Rock0_Roughness.jpg");
-    aoTexture= textureLoader.load("textures/Rock0_AmbientOcclusion.jpg");
 
 
     let ball = ballObject = new THREE.Mesh(
@@ -787,9 +668,7 @@ function createBall(){
         new THREE.MeshStandardMaterial({
             map: ballTexture,
             normalMap : normalTexture,
-            // displacementMap : displacementTexture,
             roughnessMap: roughnessTexture,
-            aoMap : aoTexture
 
         }),
     );
@@ -889,14 +768,12 @@ function namePlate() {
                 if(node instanceof THREE.Mesh){
                     node.castShadow=true;
                     node.receiveShadow=true;
-                    node.callback = objectClickHandler;
                     }
                 });
                 mesh.position.set(pos.x, pos.y, pos.z);
                 mesh.scale.set(scale.x, scale.y, scale.z);
                 mesh.rotation.set(rotation.x, rotation.y, rotation.z);
                 scene.add(mesh);
-                namer = mesh;
         });
     });
 
@@ -939,14 +816,12 @@ function subNamePlate() {
                 if(node instanceof THREE.Mesh){
                     node.castShadow=true;
                     node.receiveShadow=true;
-                    node.callback = objectClickHandler2;
                     }
                 });
                 mesh.position.set(pos.x, pos.y, pos.z);
                 mesh.scale.set(scale.x, scale.y, scale.z);
                 mesh.rotation.set(rotation.x, rotation.y, rotation.z);
                 scene.add(mesh);
-                subnamer = mesh;
         });
     });
 
