@@ -52,10 +52,10 @@ var menuScreen = {
     scene : new THREE.Scene(),
     camera : new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.2,5000),
 
-    button : new THREE.Mesh(
-        new THREE.BoxGeometry(0.5,0.5,0.5),
-        new THREE.MeshBasicMaterial({color: 0xff3333}),
-    ),
+    // button : new THREE.Mesh(
+    //     new THREE.BoxGeometry(0.5,0.5,0.5),
+    //     new THREE.MeshBasicMaterial({color: 0xff3333}),
+    // ),
 
 };
 
@@ -73,33 +73,6 @@ function htmlButton(){
     document.getElementById("info").style.cursor = "default";
     document.getElementById("btn").style.cursor = "auto";
 
-}
-
-var boxFunc = {
-    box1 : {
-        pos : {x:-16, y:6, z:-10},
-        scale : {x:10, y:10, z:10},
-        mass : 0,
-        quat : {x:0, y:0, z:0, w:1}
-    },
-    box2 : {
-        pos : {x:16, y:8.5, z:-10},
-        scale : {x:15, y:15, z:15},
-        mass : 0,
-        quat : {x:0, y:0, z:0, w:1}
-    },
-    box3 : {
-        pos : {x:-30, y:2, z:-10},
-        scale : {x:4, y:2, z:2},
-        mass : 1,
-        quat : {x:0, y:0, z:0, w:1}
-    },
-    box4 : {
-        pos : {x:-30, y:4, z:-10},
-        scale : {x:4, y:2, z:2},
-        mass : 1,
-        quat : {x:0, y:0, z:0, w:1}
-    }
 }
 
 var modelsFunc = {
@@ -398,7 +371,7 @@ function setupPhysicsWorld(){
         solver = new Ammo.btSequentialImpulseConstraintSolver();
 
     physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-    physicsWorld.setGravity(new Ammo.btVector3(0,-15,0));
+    physicsWorld.setGravity(new Ammo.btVector3(0,-25,0));
 
 }
 
@@ -504,14 +477,7 @@ function renderFrame(){
 
     if(RESOURCES_LOADED == false){
         requestAnimationFrame(renderFrame);
-        loadingScreen.box.rotation.x += 0.1;
-        loadingScreen.sphere1.material.opacity -= 0.02;
-        if(loadingScreen.sphere1.material.opacity < 0){
-            loadingScreen.sphere2.material.opacity -= 0.02;
-        }
-        if(loadingScreen.sphere2.material.opacity < 0){
-            loadingScreen.sphere3.material.opacity -= 0.02;
-        }
+
         renderer.render(loadingScreen.scene, loadingScreen.camera);
         return;
     }
@@ -568,7 +534,6 @@ function setupEventHandlers() {
     window.addEventListener('keydown', handleKeyDown, false);
     window.addEventListener('keyup', handleKeyUp, false);
     window.addEventListener('click', onMouseDown, false );
-    window.addEventListener('click', onButtonPressed, false );
     window.addEventListener("resize", onWindowResize);
 }
 
@@ -637,23 +602,6 @@ function linkedinHandler(){
 }
 function gmailHandler(){
     window.open('mailto:rishabh107107@gmail.com','_blank');
-}
-function onButtonPressed(event){
-    event.preventDefault();
-
-     
-    mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
-    mouse.y =  - (event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, menuScreen.camera);
-
-    var intersects = raycaster.intersectObjects([menuScreen.button]);
-    for(var i=0; i<intersects.length; i++){
-        // console.log(intersects[i]);
-        BUTTON_PRESSED = true;
-        document.getElementById("info").style.opacity = 0;
-    }
-
 }
 
 function onMouseDown(event) {
@@ -734,50 +682,50 @@ function backG() {
 }
 
 
-function createPlane(){
+// function createPlane(){
 
-    let pos = {x:0, y:0, z:0};
-    let scale = {x:100, y:2, z:100};
-    let quat = {x:0, y:0, z:0, w:1};
-    let mass = 0;
+//     let pos = {x:0, y:0, z:0};
+//     let scale = {x:100, y:2, z:100};
+//     let quat = {x:0, y:0, z:0, w:1};
+//     let mass = 0;
 
-    let plane = new THREE.Mesh(
-        new THREE.BoxBufferGeometry(),
-        new THREE.MeshPhongMaterial({
-            color: 0xa0afa4,
-            opacity: 0.1,
-            transparent: true
-        })
-    );
+//     let plane = new THREE.Mesh(
+//         new THREE.BoxBufferGeometry(),
+//         new THREE.MeshPhongMaterial({
+//             color: 0xa0afa4,
+//             opacity: 0.1,
+//             transparent: true
+//         })
+//     );
 
-    plane.position.set(pos.x, pos.y, pos.z);
-    plane.scale.set(scale.x, scale.y, scale.z);
+//     plane.position.set(pos.x, pos.y, pos.z);
+//     plane.scale.set(scale.x, scale.y, scale.z);
 
-    plane.castShadow = true;
-    plane.receiveShadow = true;
+//     plane.castShadow = true;
+//     plane.receiveShadow = true;
 
-    scene.add(plane);
+//     scene.add(plane);
 
-    let transform = new Ammo.btTransform();
-    transform.setIdentity();
-    transform.setOrigin( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
-    transform.setRotation( new Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
-    let motionState = new Ammo.btDefaultMotionState( transform );
+//     let transform = new Ammo.btTransform();
+//     transform.setIdentity();
+//     transform.setOrigin( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
+//     transform.setRotation( new Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
+//     let motionState = new Ammo.btDefaultMotionState( transform );
 
-    let colShape = new Ammo.btBoxShape( new Ammo.btVector3( scale.x * 0.5, scale.y * 0.5, scale.z * 0.5 ) );
-    colShape.setMargin( 0.05 );
+//     let colShape = new Ammo.btBoxShape( new Ammo.btVector3( scale.x * 0.5, scale.y * 0.5, scale.z * 0.5 ) );
+//     colShape.setMargin( 0.05 );
 
-    let localInertia = new Ammo.btVector3( 0, 0, 0 );
-    colShape.calculateLocalInertia( mass, localInertia );
+//     let localInertia = new Ammo.btVector3( 0, 0, 0 );
+//     colShape.calculateLocalInertia( mass, localInertia );
 
-    let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, colShape, localInertia );
-    let body = new Ammo.btRigidBody( rbInfo );
+//     let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, colShape, localInertia );
+//     let body = new Ammo.btRigidBody( rbInfo );
 
-    body.setFriction(4);
-    body.setRollingFriction(10);
+//     body.setFriction(4);
+//     body.setRollingFriction(10);
 
-    physicsWorld.addRigidBody(body);
-}
+//     physicsWorld.addRigidBody(body);
+// }
 
 function createWall(wallFunc){
     let quat = {x:0, y:0, z:0, w:1};
@@ -788,7 +736,7 @@ function createWall(wallFunc){
         new THREE.MeshPhongMaterial({
             color: 0x85A9C1,
             opacity: 0.2,
-            transparent: true
+            transparent: true,
         })
     );
 
@@ -822,7 +770,7 @@ function createWall(wallFunc){
 }
 
 function createBall(){
-    let pos = {x:0, y:2, z:5};
+    let pos = {x:0, y:20, z:8};
     let radius = 2;
     let quat = {x:0, y:0, z:0, w:1};
     let mass = 1;
@@ -879,51 +827,6 @@ function createBall(){
 
 }
 
-function createBox(boxFunc) {
-
-    let textureLoader = new THREE.TextureLoader();
-    boxTexture = textureLoader.load("textures/crate0/crate0_diffuse.png");
-    boxNormalMap = textureLoader.load("textures/crate0/crate0_normal.png");
-    boxBumpMap = textureLoader.load("textures/crate0/crate0_bump.png");
-
-    let box = new THREE.Mesh(
-        new THREE.BoxBufferGeometry(),
-        new THREE.MeshPhongMaterial({
-            map: boxTexture,
-            normalMap: boxNormalMap,
-            bumpMap: boxBumpMap
-        })
-    );
-    box.position.set(boxFunc.pos.x, boxFunc.pos.y, boxFunc.pos.z);
-    box.scale.set(boxFunc.scale.x, boxFunc.scale.y, boxFunc.scale.z);
-    box.castShadow = true;
-    box.receiveShadow = true;
-    scene.add(box);
-
-    let transform = new Ammo.btTransform();
-    transform.setIdentity();
-    transform.setOrigin( new Ammo.btVector3( boxFunc.pos.x, boxFunc.pos.y, boxFunc.pos.z ) );
-    transform.setRotation( new Ammo.btQuaternion( boxFunc.quat.x, boxFunc.quat.y, boxFunc.quat.z, boxFunc.quat.w ) );
-    let motionState = new Ammo.btDefaultMotionState( transform );
-
-    let colShape = new Ammo.btBoxShape( new Ammo.btVector3( boxFunc.scale.x * 0.5, boxFunc.scale.y * 0.5, boxFunc.scale.z * 0.5 ) );
-    colShape.setMargin( 0.05 );
-
-    let localInertia = new Ammo.btVector3( 0, 0, 0 );
-    colShape.calculateLocalInertia( boxFunc.mass, localInertia );
-
-    let rbInfo = new Ammo.btRigidBodyConstructionInfo( boxFunc.mass, motionState, colShape, localInertia );
-    let body = new Ammo.btRigidBody( rbInfo );
-
-    body.setFriction(4);
-    body.setRollingFriction(10);
-    body.setActivationState(STATE.DISABLE_DEACTIVATION);
-
-    physicsWorld.addRigidBody(body);
-    box.userData.physicsBody = body;
-    rigidBodies.push(box);
-
-}
 
 function models(modelsFunc) {
 
