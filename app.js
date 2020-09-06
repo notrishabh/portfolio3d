@@ -9,6 +9,11 @@ var imagePlane;
 var subnamer;
 let cloudParticles = [], flash;
 
+if(navigator.userAgent.match(/Android/i)){
+    alert("ANROID!!!!!");
+}else {
+    alert("xd");
+}
 
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
