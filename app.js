@@ -658,17 +658,17 @@ function createBall(){
     let mass = 3;
 
     let textureLoader = new THREE.TextureLoader(loadingManager);
-    ballTexture = textureLoader.load("textures/rock0_color.jpg");
-    normalTexture = textureLoader.load("textures/rock0_normal.jpg");
-    roughnessTexture= textureLoader.load("textures/Rock0_Roughness.jpg");
-
+    // ballTexture = textureLoader.load("textures/rock0_color.jpg");
+    // normalTexture = textureLoader.load("textures/rock0_normal.jpg");
+    // roughnessTexture= textureLoader.load("textures/Rock0_Roughness.jpg");
+    ballTexture = textureLoader.load("textures/rock 5.png");
 
     let ball = ballObject = new THREE.Mesh(
         new THREE.SphereGeometry(radius, 32, 32),
         new THREE.MeshStandardMaterial({
             map: ballTexture,
-            normalMap : normalTexture,
-            roughnessMap: roughnessTexture,
+            // normalMap : normalTexture,
+            // roughnessMap: roughnessTexture,
 
         }),
     );
