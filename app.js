@@ -9,11 +9,6 @@ var imagePlane;
 var subnamer;
 let cloudParticles = [], flash;
 
-if(navigator.userAgent.match(/Android/i)){
-    alert("ANROID!!!!!");
-}else {
-    alert("xd");
-}
 
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
@@ -345,9 +340,9 @@ function setupGraphics(){
     camera.position.set(0,30,50);
 
     loadingManager = new THREE.LoadingManager();
-    // loadingManager.onProgress = function(item, loaded, total){
-    //     console.log(item,loaded,total);
-    // };
+    loadingManager.onProgress = function(item, loaded, total){
+        console.log(item,loaded,total);
+    };
     loadingManager.onLoad = function(){
         console.log("loaded all resources");
             RESOURCES_LOADED = true;
