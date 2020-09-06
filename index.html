@@ -53,8 +53,9 @@
 
     <script>
         setTimeout(function(){
-            if(navigator.userAgent.match(/Android/i)){
-            alert("FO");
+            if(navigator.userAgent.match(/Android/i) || 
+            navigator.userAgent.match(/iPhone/i)){
+                window.open("./mob.html","_self")
             }else{
                 window.open("./pc.html","_self")
             }
