@@ -45,8 +45,8 @@ function htmlButton(){
 
 var modelsFunc = {
     plane: {
-        mtl: "models/plane/plane.mtl",
-        obj: "models/plane/plane.obj",
+        mtl: "models/plane/plane1.mtl",
+        obj: "models/plane/plane1.obj",
         pos : {x:0, y:1, z:0},
         scale : {x:1, y:1, z:1},
         rotation : {x:0, y:0, z:0},
