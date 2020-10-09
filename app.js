@@ -143,19 +143,29 @@ var modelsFunc = {
     chess: {
         mtl: "models/chess.mtl",
         obj: "models/chess.obj",
-        pos : {x:-5, y:1, z:45},
+        pos : {x:-3.7, y:1, z:45},
         scale : {x:4, y:4, z:4},
         rotation : {x:0, y:0, z:0},
         quat : {x:0, y:0, z:0, w:1},
         mass : 0,
         phyScale : {x:1.5, y:7, z:1.5}
     },
-    guitar: {
-        mtl: "models/2.mtl",
-        obj: "models/2.obj",
-        pos : {x:0.5, y:1, z:45},
-        scale : {x:0.01, y:0.01, z:0.01},
-        rotation : {x:-1.57, y:-0.5, z:-2.34},
+    // guitar: {
+    //     mtl: "models/2.mtl",
+    //     obj: "models/2.obj",
+    //     pos : {x:0.5, y:1, z:45},
+    //     scale : {x:0.01, y:0.01, z:0.01},
+    //     rotation : {x:-1.57, y:-0.5, z:-2.34},
+    //     quat : {x:0, y:0, z:0, w:1},
+    //     mass : 0,
+    //     phyScale : {x:1.5, y:7, z:1.5}
+    // },
+    guitar2: {
+        mtl: "models/ElectricGuitar.mtl",
+        obj: "models/ElectricGuitar.obj",
+        pos : {x:0, y:1, z:46},
+        scale : {x:0.5, y:0.5, z:0.5},
+        rotation : {x:-0.5, y:0.7, z:0.3},
         quat : {x:0, y:0, z:0, w:1},
         mass : 0,
         phyScale : {x:1.5, y:7, z:1.5}
@@ -294,7 +304,8 @@ function start(){
     models(modelsFunc.linkedin);
     models(modelsFunc.gmail);
     models(modelsFunc.chess);
-    models(modelsFunc.guitar);
+    // models(modelsFunc.guitar);
+    models(modelsFunc.guitar2);
 
     namePlate();
     subNamePlate();
